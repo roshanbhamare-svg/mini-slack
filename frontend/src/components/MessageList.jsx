@@ -7,7 +7,7 @@ const formatTime = (dateString) => {
   return new Date(dateString).toLocaleTimeString([], options);
 };
 
-const MessageList = ({ messages, currentUser, channelId }) => {
+const MessageList = ({ messages, currentUser, channelId, onReply }) => {
   const socket = useSocket();
   const [hoveredMessageId, setHoveredMessageId] = useState(null);
 
@@ -90,6 +90,7 @@ const MessageList = ({ messages, currentUser, channelId }) => {
                   ))}
                 </div>
                 <button 
+                  onClick={() => onReply && onReply(msg)}
                   className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded transition-colors"
                   title="Reply"
                 >

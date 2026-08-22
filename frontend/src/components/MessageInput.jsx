@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSocket } from '../context/SocketContext';
 import { Send } from 'lucide-react';
 
-const MessageInput = ({ channelId, currentUser }) => {
+const MessageInput = ({ channelId, currentUser, threadId = null }) => {
   const [content, setContent] = useState('');
   const socket = useSocket();
 
@@ -14,6 +14,7 @@ const MessageInput = ({ channelId, currentUser }) => {
       channelId,
       content: content.trim(),
       senderId: currentUser._id,
+      threadId,
     });
     
     setContent('');

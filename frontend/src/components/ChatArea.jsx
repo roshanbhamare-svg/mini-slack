@@ -3,12 +3,14 @@ import axios from 'axios';
 import { useSocket } from '../context/SocketContext';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
+import ThreadPane from './ThreadPane';
 import { Search } from 'lucide-react';
 
 const ChatArea = ({ channel, currentUser }) => {
   const [messages, setMessages] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [activeThread, setActiveThread] = useState(null);
   const socket = useSocket();
   const messagesEndRef = useRef(null);
 
@@ -45,6 +47,7 @@ const ChatArea = ({ channel, currentUser }) => {
       fetchMessages();
       setSearchQuery('');
       setIsSearching(false);
+      setActiveThread(null);
     }
   }, [channel, socket]);
 
@@ -88,37 +91,49 @@ const ChatArea = ({ channel, currentUser }) => {
   }, [messages, isSearching]);
 
   return (
-    <div className="flex flex-col h-full bg-gray-800">
-      <div className="h-14 border-b border-gray-700 shadow-sm flex items-center justify-between px-6 bg-gray-800/95 backdrop-blur z-10 shrink-0">
-        <h2 className="font-bold text-gray-100 flex items-center gap-1.5">
-          <span className="text-gray-500">#</span> {channel.name.replace('#', '')}
-        </h2>
-        
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-          <input 
-            type="text" 
-            placeholder="Search messages..." 
-            value={searchQuery}
-            onChange={handleSearch}
-            className="bg-gray-900 border border-gray-700 text-sm rounded-full pl-9 pr-4 py-1.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-gray-200 placeholder-gray-500 w-64"
-          />
+    <div className="flex h-full w-full">
+      <div className="flex flex-col h-full bg-gray-800 flex-1 min-w-0">
+        <div className="h-14 border-b border-gray-700 shadow-sm flex items-center justify-between px-6 bg-gray-800/95 backdrop-blur z-10 shrink-0">
+          <h2 className="font-bold text-gray-100 flex items-center gap-1.5">
+            <span className="text-gray-500">#</span> {channel.name.replace('#', '')}
+          </h2>
+          
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <input 
+              type="text" 
+              placeholder="Search messages..." 
+              value={searchQuery}
+              onChange={handleSearch}
+              className="bg-gray-900 border border-gray-700 text-sm rounded-full pl-9 pr-4 py-1.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-gray-200 placeholder-gray-500 w-64"
+            />
+          </div>
         </div>
-      </div>
-      
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-1">
-        <MessageList 
-          messages={messages} 
-          currentUser={currentUser} 
-          channelId={channel._id} 
-        />
-        <div ref={messagesEndRef} />
+        
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-1">
+          <MessageList 
+            messages={messages} 
+            currentUser={currentUser} 
+            channelId={channel._id} 
+            onReply={(msg) => setActiveThread(msg)}
+          />
+          <div ref={messagesEndRef} />
+        </div>
+
+        {!isSearching && (
+          <div className="shrink-0 p-4 pt-0">
+            <MessageInput channelId={channel._id} currentUser={currentUser} />
+          </div>
+        )}
       </div>
 
-      {!isSearching && (
-        <div className="shrink-0 p-4 pt-0">
-          <MessageInput channelId={channel._id} currentUser={currentUser} />
-        </div>
+      {activeThread && (
+        <ThreadPane 
+          activeThread={activeThread} 
+          onClose={() => setActiveThread(null)} 
+          currentUser={currentUser} 
+          channelId={channel._id}
+        />
       )}
     </div>
   );
