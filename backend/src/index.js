@@ -24,30 +24,22 @@ const io = new Server(server, {
 });
 setupSocket(io);
 
+const cookieParser = require('cookie-parser');
+const authRoutes = require('./routes/authRoutes');
+const { protect } = require('./middlewares/authMiddleware');
+
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Must be exact for credentials
+  credentials: true,
+}));
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
-app.use('/api/channels', channelRoutes);
-app.use('/api/messages', messageRoutes);
-
-const User = require('./models/User');
-app.post('/api/users/login', async (req, res) => {
-  try {
-    const { username } = req.body;
-    let user = await User.findOne({ username });
-    if (!user) {
-      user = await User.create({ 
-        username, 
-        avatarUrl: `https://ui-avatars.com/api/?name=${username}&background=random` 
-      });
-    }
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
+app.use('/api/auth', authRoutes);
+app.use('/api/channels', protect, channelRoutes);
+app.use('/api/messages', protect, messageRoutes);
 
 // Simple health check route
 app.get('/', (req, res) => {

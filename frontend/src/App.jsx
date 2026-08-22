@@ -1,40 +1,34 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import ChatArea from './components/ChatArea';
+import Login from './components/Login';
+import Register from './components/Register';
 import { SocketProvider } from './context/SocketContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import axios from 'axios';
 
-function App() {
+const ProtectedLayout = () => {
+  const { currentUser, loading } = useAuth();
   const [channels, setChannels] = useState([]);
   const [currentChannel, setCurrentChannel] = useState(null);
-  
-  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    // Fetch mock user and channels on mount
-    const initApp = async () => {
+    if (!currentUser) return;
+    const fetchChannels = async () => {
       try {
-        // 1. Get or create a random mock user in the DB
-        const randomName = 'Guest' + Math.floor(Math.random() * 1000);
-        const userRes = await axios.post('http://localhost:5001/api/users/login', { username: randomName });
-        setCurrentUser(userRes.data);
-
-        // 2. Fetch channels
-        const res = await axios.get('http://localhost:5001/api/channels');
+        const res = await axios.get('/api/channels');
         setChannels(res.data);
-        if (res.data.length > 0) {
-          setCurrentChannel(res.data[0]);
-        }
+        if (res.data.length > 0) setCurrentChannel(res.data[0]);
       } catch (err) {
-        console.error('Error initializing app', err);
+        console.error('Error fetching channels', err);
       }
     };
-    initApp();
-  }, []);
+    fetchChannels();
+  }, [currentUser]);
 
-  if (!currentUser) {
-    return <div className="h-screen w-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>;
-  }
+  if (loading) return <div className="h-screen w-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>;
+  if (!currentUser) return <Navigate to="/login" />;
 
   return (
     <SocketProvider>
@@ -46,10 +40,7 @@ function App() {
         />
         <div className="flex-1 flex flex-col min-w-0 bg-gray-800">
           {currentChannel ? (
-            <ChatArea 
-              channel={currentChannel} 
-              currentUser={currentUser} 
-            />
+            <ChatArea channel={currentChannel} currentUser={currentUser} />
           ) : (
             <div className="flex-1 flex items-center justify-center text-gray-400">
               Select a channel to start messaging
@@ -58,6 +49,18 @@ function App() {
         </div>
       </div>
     </SocketProvider>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/*" element={<ProtectedLayout />} />
+      </Routes>
+    </AuthProvider>
   );
 }
 
