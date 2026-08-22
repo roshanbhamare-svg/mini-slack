@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSocket } from '../context/SocketContext';
-import { Trash2, MessageSquare, Smile } from 'lucide-react';
+import { Trash2, MessageSquare, Smile, Info } from 'lucide-react';
+import MessageInfoModal from './MessageInfoModal';
 
 const formatTime = (dateString) => {
   const options = { hour: '2-digit', minute: '2-digit' };
@@ -10,6 +11,7 @@ const formatTime = (dateString) => {
 const MessageList = ({ messages, currentUser, channelId, onReply }) => {
   const socket = useSocket();
   const [hoveredMessageId, setHoveredMessageId] = useState(null);
+  const [infoMessage, setInfoMessage] = useState(null);
 
   const handleDelete = (messageId) => {
     socket.emit('delete_message', { messageId, channelId });
@@ -97,19 +99,35 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
                   <MessageSquare size={14} />
                 </button>
                 {isMine && (
-                  <button 
-                    onClick={() => handleDelete(msg._id)}
-                    className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded transition-colors"
-                    title="Delete Message"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                  <>
+                    <button 
+                      onClick={() => setInfoMessage(msg)}
+                      className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded transition-colors"
+                      title="Message Info"
+                    >
+                      <Info size={14} />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(msg._id)}
+                      className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded transition-colors"
+                      title="Delete Message"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </>
                 )}
               </div>
             )}
           </div>
         );
       })}
+
+      {infoMessage && (
+        <MessageInfoModal 
+          message={infoMessage} 
+          onClose={() => setInfoMessage(null)} 
+        />
+      )}
     </div>
   );
 };

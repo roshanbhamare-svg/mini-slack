@@ -46,8 +46,32 @@ const getThreadReplies = async (req, res) => {
   }
 };
 
+const getMessageReaders = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const message = await Message.findById(messageId);
+    if (!message) return res.status(404).json({ message: 'Message not found' });
+
+    const channelIdStr = message.channel.toString();
+    
+    // Find users who have lastRead for this channel >= message.createdAt
+    // Exclude the sender
+    const query = {
+      _id: { $ne: message.sender },
+      [`lastRead.${channelIdStr}`]: { $gte: message.createdAt }
+    };
+    
+    const User = require('../models/User');
+    const readers = await User.find(query).select('username avatarUrl');
+    res.json(readers);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
   getMessages,
   searchMessages,
   getThreadReplies,
+  getMessageReaders,
 };
