@@ -8,28 +8,33 @@ function App() {
   const [channels, setChannels] = useState([]);
   const [currentChannel, setCurrentChannel] = useState(null);
   
-  // Basic user mock for this demo
-  const [currentUser] = useState({
-    _id: 'mock-user-' + Math.floor(Math.random() * 10000), // In real app, from Auth
-    username: 'Guest' + Math.floor(Math.random() * 100),
-    avatarUrl: `https://ui-avatars.com/api/?name=Guest`
-  });
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    // Fetch channels on mount
-    const fetchChannels = async () => {
+    // Fetch mock user and channels on mount
+    const initApp = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/channels');
+        // 1. Get or create a random mock user in the DB
+        const randomName = 'Guest' + Math.floor(Math.random() * 1000);
+        const userRes = await axios.post('http://localhost:5001/api/users/login', { username: randomName });
+        setCurrentUser(userRes.data);
+
+        // 2. Fetch channels
+        const res = await axios.get('http://localhost:5001/api/channels');
         setChannels(res.data);
         if (res.data.length > 0) {
           setCurrentChannel(res.data[0]);
         }
       } catch (err) {
-        console.error('Error fetching channels', err);
+        console.error('Error initializing app', err);
       }
     };
-    fetchChannels();
+    initApp();
   }, []);
+
+  if (!currentUser) {
+    return <div className="h-screen w-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>;
+  }
 
   return (
     <SocketProvider>

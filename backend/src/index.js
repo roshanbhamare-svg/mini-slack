@@ -32,6 +32,23 @@ app.use(express.json());
 app.use('/api/channels', channelRoutes);
 app.use('/api/messages', messageRoutes);
 
+const User = require('./models/User');
+app.post('/api/users/login', async (req, res) => {
+  try {
+    const { username } = req.body;
+    let user = await User.findOne({ username });
+    if (!user) {
+      user = await User.create({ 
+        username, 
+        avatarUrl: `https://ui-avatars.com/api/?name=${username}&background=random` 
+      });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Simple health check route
 app.get('/', (req, res) => {
   res.send('Mini Slack API is running...');

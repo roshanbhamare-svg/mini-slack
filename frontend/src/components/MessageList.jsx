@@ -76,14 +76,19 @@ const MessageList = ({ messages, currentUser, channelId }) => {
 
             {/* Hover Actions */}
             {!msg.isDeleted && hoveredMessageId === msg._id && (
-              <div className="absolute right-6 -mt-3 bg-gray-800 border border-gray-700 shadow-md rounded-md flex items-center p-0.5">
-                <button 
-                  onClick={() => handleReaction(msg._id, '👍')}
-                  className="p-1.5 text-gray-400 hover:text-yellow-400 hover:bg-gray-700 rounded transition-colors"
-                  title="React 👍"
-                >
-                  <Smile size={14} />
-                </button>
+              <div className="absolute right-6 -mt-3 bg-gray-800 border border-gray-700 shadow-md rounded-md flex items-center p-0.5 z-10">
+                <div className="flex items-center gap-1 border-r border-gray-700 pr-1 mr-1">
+                  {['👍', '❤️', '😂', '🔥', '👀'].map(emoji => (
+                    <button 
+                      key={emoji}
+                      onClick={() => handleReaction(msg._id, emoji)}
+                      className="p-1 text-gray-400 hover:bg-gray-600 hover:scale-110 rounded transition-all text-sm"
+                      title={`React ${emoji}`}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
                 <button 
                   className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded transition-colors"
                   title="Reply"

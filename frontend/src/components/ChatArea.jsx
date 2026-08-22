@@ -14,7 +14,7 @@ const ChatArea = ({ channel, currentUser }) => {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/messages/${channel._id}`);
+      const res = await axios.get(`http://localhost:5001/api/messages/${channel._id}`);
       setMessages(res.data);
     } catch (err) {
       console.error(err);
@@ -32,7 +32,7 @@ const ChatArea = ({ channel, currentUser }) => {
     
     setIsSearching(true);
     try {
-      const res = await axios.get(`http://localhost:5000/api/messages/search?q=${q}&channelId=${channel._id}`);
+      const res = await axios.get(`http://localhost:5001/api/messages/search?q=${q}&channelId=${channel._id}`);
       setMessages(res.data);
     } catch (err) {
       console.error(err);
@@ -62,12 +62,20 @@ const ChatArea = ({ channel, currentUser }) => {
       setMessages(prev => prev.map(m => m._id === deletedId ? { ...m, isDeleted: true, content: 'This message was deleted.' } : m));
     };
 
+    const onReactionUpdated = (updatedMessage) => {
+      if (updatedMessage.channel === channel._id) {
+        setMessages(prev => prev.map(m => m._id === updatedMessage._id ? updatedMessage : m));
+      }
+    };
+
     socket.on('receive_message', onReceiveMessage);
     socket.on('message_deleted', onMessageDeleted);
+    socket.on('reaction_updated', onReactionUpdated);
 
     return () => {
       socket.off('receive_message', onReceiveMessage);
       socket.off('message_deleted', onMessageDeleted);
+      socket.off('reaction_updated', onReactionUpdated);
     };
   }, [socket, channel]);
 
