@@ -8,6 +8,7 @@ const setupSocket = require('./utils/socket');
 
 const channelRoutes = require('./routes/channelRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 // Connect to MongoDB
 connectDB();
@@ -40,6 +41,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/channels', protect, channelRoutes);
 app.use('/api/messages', protect, messageRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Simple health check route
 app.get('/', (req, res) => {

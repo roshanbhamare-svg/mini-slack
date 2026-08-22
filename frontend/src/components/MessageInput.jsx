@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSocket } from '../context/SocketContext';
 import { Send } from 'lucide-react';
 
-const MessageInput = ({ channelId, currentUser, threadId = null }) => {
+const MessageInput = ({ channelId, currentUser, threadId = null, initialDraft = '', draftTrigger = 0 }) => {
   const [content, setContent] = useState('');
+
+  useEffect(() => {
+    if (draftTrigger > 0 && initialDraft) {
+      setContent(initialDraft);
+    }
+  }, [draftTrigger, initialDraft]);
   const socket = useSocket();
 
   const handleSend = (e) => {

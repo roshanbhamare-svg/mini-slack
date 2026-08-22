@@ -3,10 +3,13 @@ import axios from 'axios';
 import { useSocket } from '../context/SocketContext';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
-import { X } from 'lucide-react';
+import { X, Sparkles, Loader2 } from 'lucide-react';
 
 const ThreadPane = ({ activeThread, onClose, currentUser, channelId }) => {
   const [replies, setReplies] = useState([]);
+  const [aiDraft, setAiDraft] = useState('');
+  const [draftTrigger, setDraftTrigger] = useState(0);
+  const [isDrafting, setIsDrafting] = useState(false);
   const socket = useSocket();
   const messagesEndRef = useRef(null);
 
@@ -56,6 +59,27 @@ const ThreadPane = ({ activeThread, onClose, currentUser, channelId }) => {
     scrollToBottom();
   }, [replies]);
 
+  const handleDraftReply = async () => {
+    if (!activeThread) return;
+    setIsDrafting(true);
+    setAiDraft(''); // clear previous draft trigger
+    
+    try {
+      const res = await axios.post('/api/ai/draft-reply', {
+        originalMessage: activeThread.content
+      });
+      // Append a space so user can keep typing easily
+      setAiDraft(res.data.draft + ' ');
+      setDraftTrigger(prev => prev + 1);
+    } catch (err) {
+      console.error('Error drafting reply:', err);
+      const backendMessage = err.response?.data?.message || 'Failed to draft reply.';
+      alert(backendMessage);
+    } finally {
+      setIsDrafting(false);
+    }
+  };
+
   if (!activeThread) return null;
 
   return (
@@ -89,11 +113,25 @@ const ThreadPane = ({ activeThread, onClose, currentUser, channelId }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="shrink-0 p-4 pt-0">
+      <div className="shrink-0 p-4 pt-0 flex flex-col gap-2">
+        <button
+          onClick={handleDraftReply}
+          disabled={isDrafting}
+          className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-purple-600/20 to-blue-600/20 text-purple-300 hover:from-purple-600/40 hover:to-blue-600/40 border border-purple-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isDrafting ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <Sparkles size={14} className="text-purple-400" />
+          )}
+          {isDrafting ? 'Drafting...' : 'Draft AI Reply'}
+        </button>
         <MessageInput 
           channelId={channelId} 
           currentUser={currentUser} 
           threadId={activeThread._id} 
+          initialDraft={aiDraft}
+          draftTrigger={draftTrigger}
         />
       </div>
     </div>

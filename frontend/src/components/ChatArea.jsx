@@ -94,8 +94,21 @@ const ChatArea = ({ channel, currentUser }) => {
     <div className="flex h-full w-full">
       <div className="flex flex-col h-full bg-gray-800 flex-1 min-w-0">
         <div className="h-14 border-b border-gray-700 shadow-sm flex items-center justify-between px-6 bg-gray-800/95 backdrop-blur z-10 shrink-0">
-          <h2 className="font-bold text-gray-100 flex items-center gap-1.5">
-            <span className="text-gray-500">#</span> {channel.name.replace('#', '')}
+          <h2 className="font-bold text-gray-100 flex items-center gap-2">
+            {channel.isDM ? (
+              <>
+                <img 
+                  src={channel.members?.find(m => m._id !== currentUser._id)?.avatarUrl || channel.members?.[0]?.avatarUrl || 'https://ui-avatars.com/api/?name=Unknown'} 
+                  alt="avatar"
+                  className="w-5 h-5 rounded-md bg-gray-700" 
+                />
+                {channel.members?.find(m => m._id !== currentUser._id)?.username || channel.members?.[0]?.username || 'Unknown'}
+              </>
+            ) : (
+              <>
+                <span className="text-gray-500">#</span> {channel.name.replace('#', '')}
+              </>
+            )}
           </h2>
           
           <div className="relative">

@@ -14,19 +14,20 @@ const ProtectedLayout = () => {
   const [currentChannel, setCurrentChannel] = useState(null);
   const socket = useSocket();
 
+  const fetchChannels = async () => {
+    try {
+      const res = await axios.get('/api/channels');
+      setChannels(res.data);
+      if (res.data.length > 0 && !currentChannel) {
+        handleChannelSelect(res.data[0]);
+      }
+    } catch (err) {
+      console.error('Error fetching channels', err);
+    }
+  };
+
   useEffect(() => {
     if (!currentUser) return;
-    const fetchChannels = async () => {
-      try {
-        const res = await axios.get('/api/channels');
-        setChannels(res.data);
-        if (res.data.length > 0) {
-          handleChannelSelect(res.data[0]);
-        }
-      } catch (err) {
-        console.error('Error fetching channels', err);
-      }
-    };
     fetchChannels();
   }, [currentUser]);
 
@@ -73,6 +74,7 @@ const ProtectedLayout = () => {
         currentChannel={currentChannel}
         setCurrentChannel={handleChannelSelect}
         currentUser={currentUser}
+        fetchChannels={fetchChannels}
       />
       <div className="flex-1 flex flex-col min-w-0 bg-gray-800">
         {currentChannel ? (

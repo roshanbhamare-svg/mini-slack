@@ -158,10 +158,22 @@ const changePassword = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const currentUserId = req.user ? req.user._id : null;
+    const query = currentUserId ? { _id: { $ne: currentUserId } } : {};
+    const users = await User.find(query).select('username avatarUrl email').sort({ username: 1 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   register,
   login,
   refresh,
   logout,
-  changePassword
+  changePassword,
+  getAllUsers
 };

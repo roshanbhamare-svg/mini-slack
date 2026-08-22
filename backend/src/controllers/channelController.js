@@ -4,7 +4,16 @@ const User = require('../models/User');
 
 const getChannels = async (req, res) => {
   try {
-    const channels = await Channel.find().sort({ createdAt: 1 }).lean();
+    // Determine query: If user logged in, get public channels OR DMs where user is member
+    // Use { $ne: true } so older channels without the isDM field are treated as public
+    const query = req.user 
+      ? { $or: [{ isDM: { $ne: true } }, { isDM: true, members: req.user._id }] }
+      : { isDM: { $ne: true } };
+
+    const channels = await Channel.find(query)
+      .populate('members', 'username avatarUrl')
+      .sort({ createdAt: 1 })
+      .lean();
     
     if (req.user) {
       // Calculate unread count for each channel
@@ -64,8 +73,39 @@ const initChannels = async (req, res) => {
   }
 };
 
+const createDM = async (req, res) => {
+  try {
+    const { targetUserId } = req.body;
+    if (!req.user) return res.status(401).json({ message: 'Not authenticated' });
+
+    // Ensure we don't DM ourselves
+    if (req.user._id.toString() === targetUserId) {
+      return res.status(400).json({ message: 'Cannot DM yourself' });
+    }
+
+    const members = [req.user._id, targetUserId].sort();
+    const dmName = `DM_${members[0]}_${members[1]}`;
+
+    // Check if it already exists
+    let channel = await Channel.findOne({ name: dmName });
+    if (!channel) {
+      channel = await Channel.create({
+        name: dmName,
+        isDM: true,
+        members: members
+      });
+    }
+    
+    const populatedChannel = await Channel.findById(channel._id).populate('members', 'username avatarUrl').lean();
+    res.json(populatedChannel);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
   getChannels,
   markChannelRead,
   initChannels,
+  createDM,
 };
