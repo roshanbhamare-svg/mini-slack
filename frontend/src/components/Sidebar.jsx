@@ -1,32 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useSocket } from '../context/SocketContext';
-import { Hash } from 'lucide-react';
+import React, { useState } from 'react';
+import { Hash, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import ProfileModal from './ProfileModal';
 
-const Sidebar = ({ channels, currentChannel, setCurrentChannel }) => {
-  const socket = useSocket();
-  const [unreadCounts, setUnreadCounts] = useState({});
-
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleNewMessage = (message) => {
-      // If the message is not for the currently open channel, increment unread count
-      if (currentChannel && message.channel !== currentChannel._id) {
-        setUnreadCounts(prev => ({
-          ...prev,
-          [message.channel]: (prev[message.channel] || 0) + 1
-        }));
-      }
-    };
-
-    socket.on('receive_message', handleNewMessage);
-    return () => socket.off('receive_message', handleNewMessage);
-  }, [socket, currentChannel]);
+const Sidebar = ({ channels, currentChannel, setCurrentChannel, currentUser }) => {
+  const { logout } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleChannelClick = (channel) => {
     setCurrentChannel(channel);
-    // Clear unread count when opening the channel
-    setUnreadCounts(prev => ({ ...prev, [channel._id]: 0 }));
   };
 
   return (
@@ -43,7 +25,7 @@ const Sidebar = ({ channels, currentChannel, setCurrentChannel }) => {
           <div className="space-y-1">
             {channels.map((channel) => {
               const isActive = currentChannel?._id === channel._id;
-              const hasUnread = unreadCounts[channel._id] > 0;
+              const hasUnread = channel.unreadCount > 0;
               
               return (
                 <button
@@ -63,7 +45,7 @@ const Sidebar = ({ channels, currentChannel, setCurrentChannel }) => {
                   </div>
                   {hasUnread && !isActive && (
                     <span className="bg-purple-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)]">
-                      {unreadCounts[channel._id]}
+                      {channel.unreadCount}
                     </span>
                   )}
                 </button>
@@ -72,6 +54,39 @@ const Sidebar = ({ channels, currentChannel, setCurrentChannel }) => {
           </div>
         </div>
       </div>
+
+      {currentUser && (
+        <>
+          <div 
+            onClick={() => setIsProfileOpen(true)}
+            className="p-4 border-t border-gray-800 bg-gray-900 shrink-0 cursor-pointer hover:bg-gray-800 transition-colors"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
+                <img src={currentUser.avatarUrl} alt={currentUser.username} className="w-8 h-8 rounded-md bg-gray-800" />
+                <div className="truncate">
+                  <div className="text-sm font-bold text-gray-200 truncate">{currentUser.username}</div>
+                  <div className="text-xs text-gray-500 truncate">{currentUser.email}</div>
+                </div>
+              </div>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  logout();
+                }} 
+                className="text-gray-500 hover:text-red-400 hover:bg-gray-700 p-1.5 rounded transition-colors" 
+                title="Logout"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          </div>
+          
+          {isProfileOpen && (
+            <ProfileModal onClose={() => setIsProfileOpen(false)} currentUser={currentUser} />
+          )}
+        </>
+      )}
     </div>
   );
 };

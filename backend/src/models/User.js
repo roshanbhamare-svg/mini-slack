@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: 'https://ui-avatars.com/api/?name=User',
     },
+    lastRead: {
+      type: Map,
+      of: Date,
+      default: {},
+    },
   },
   { timestamps: true }
 );

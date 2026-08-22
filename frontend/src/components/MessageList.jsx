@@ -22,7 +22,7 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
   return (
     <div className="flex flex-col">
       {messages.map((msg, index) => {
-        const isMine = msg.sender?._id === currentUser._id || msg.sender?._id === undefined;
+        const isMine = msg.sender?._id === currentUser._id;
         const showAvatar = index === 0 || messages[index - 1].sender?._id !== msg.sender?._id;
 
         return (
@@ -35,7 +35,7 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
             <div className="w-10 flex-shrink-0 flex justify-center">
               {showAvatar ? (
                 <img 
-                  src={msg.sender?.avatarUrl || currentUser.avatarUrl} 
+                  src={msg.sender?.avatarUrl || 'https://ui-avatars.com/api/?name=Unknown&background=555&color=fff'} 
                   alt="avatar" 
                   className="w-10 h-10 rounded-md object-cover shadow-sm bg-gray-700"
                 />
@@ -50,7 +50,7 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
               {showAvatar && (
                 <div className="flex items-baseline gap-2 mb-0.5">
                   <span className="font-semibold text-gray-200">
-                    {msg.sender?.username || currentUser.username}
+                    {msg.sender?.username || 'Unknown User'}
                   </span>
                   <span className="text-xs text-gray-500">
                     {formatTime(msg.createdAt)}

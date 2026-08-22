@@ -47,8 +47,11 @@ const setupSocket = (io) => {
         await newMessage.save();
         const populatedMessage = await Message.findById(newMessage._id).populate('sender', 'username avatarUrl');
         
-        // Broadcast to everyone in the channel
+        // Broadcast to everyone in the channel for the active chat UI
         io.to(channelId).emit('receive_message', populatedMessage);
+        
+        // Broadcast globally to update unread badges
+        io.emit('new_unread_message', { channelId, threadId });
       } catch (error) {
         console.error('Error sending message:', error);
       }
