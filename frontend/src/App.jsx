@@ -64,11 +64,11 @@ const ProtectedLayout = () => {
     }
   };
 
-  if (loading) return <div className="h-screen w-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>;
+  if (loading) return <div className="h-screen w-screen bg-gray-50 flex items-center justify-center text-gray-900">Loading...</div>;
   if (!currentUser) return <Navigate to="/login" />;
 
   return (
-    <div className="flex h-screen w-screen bg-gray-900 text-white overflow-hidden font-sans">
+    <div className="flex h-screen w-screen bg-gray-50 text-gray-900 overflow-hidden font-sans">
       <Sidebar 
         channels={channels} 
         currentChannel={currentChannel}
@@ -76,7 +76,7 @@ const ProtectedLayout = () => {
         currentUser={currentUser}
         fetchChannels={fetchChannels}
       />
-      <div className="flex-1 flex flex-col min-w-0 bg-gray-800">
+      <div className="flex-1 flex flex-col min-w-0 bg-gray-50">
         {currentChannel ? (
           <ChatArea channel={currentChannel} currentUser={currentUser} />
         ) : (

@@ -92,21 +92,21 @@ const ChatArea = ({ channel, currentUser }) => {
 
   return (
     <div className="flex h-full w-full">
-      <div className="flex flex-col h-full bg-gray-800 flex-1 min-w-0">
-        <div className="h-14 border-b border-gray-700 shadow-sm flex items-center justify-between px-6 bg-gray-800/95 backdrop-blur z-10 shrink-0">
-          <h2 className="font-bold text-gray-100 flex items-center gap-2">
+      <div className="flex flex-col h-full bg-gray-50 flex-1 min-w-0">
+        <div className="h-14 border-b border-gray-200 shadow-sm flex items-center justify-between px-6 bg-white/95 backdrop-blur z-10 shrink-0">
+          <h2 className="font-bold text-gray-900 flex items-center gap-2">
             {channel.isDM ? (
               <>
                 <img 
                   src={channel.members?.find(m => m._id !== currentUser._id)?.avatarUrl || channel.members?.[0]?.avatarUrl || 'https://ui-avatars.com/api/?name=Unknown'} 
                   alt="avatar"
-                  className="w-5 h-5 rounded-md bg-gray-700" 
+                  className="w-5 h-5 rounded-md bg-gray-200 border border-gray-200" 
                 />
                 {channel.members?.find(m => m._id !== currentUser._id)?.username || channel.members?.[0]?.username || 'Unknown'}
               </>
             ) : (
               <>
-                <span className="text-gray-500">#</span> {channel.name.replace('#', '')}
+                <span className="text-gray-400">#</span> {channel.name.replace('#', '')}
               </>
             )}
           </h2>
@@ -118,7 +118,7 @@ const ChatArea = ({ channel, currentUser }) => {
               placeholder="Search messages..." 
               value={searchQuery}
               onChange={handleSearch}
-              className="bg-gray-900 border border-gray-700 text-sm rounded-full pl-9 pr-4 py-1.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-gray-200 placeholder-gray-500 w-64"
+              className="bg-gray-50 border border-gray-200 text-sm rounded-full pl-9 pr-4 py-1.5 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all text-gray-900 placeholder-gray-400 w-64 shadow-sm"
             />
           </div>
         </div>

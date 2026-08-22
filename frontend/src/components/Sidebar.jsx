@@ -29,9 +29,9 @@ const Sidebar = ({ channels, currentChannel, setCurrentChannel, currentUser, fet
   };
 
   return (
-    <div className="w-64 bg-gray-900 flex flex-col h-full border-r border-gray-700 shadow-xl z-10">
-      <div className="p-4 flex items-center shadow-md bg-gray-900 border-b border-gray-800">
-        <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+    <div className="w-64 bg-gray-950 flex flex-col h-full border-r border-gray-900 shadow-sm z-10">
+      <div className="p-4 flex items-center bg-gray-950 border-b border-gray-900">
+        <h1 className="text-xl font-bold tracking-tight text-white">
           Mini Slack
         </h1>
       </div>
@@ -50,18 +50,18 @@ const Sidebar = ({ channels, currentChannel, setCurrentChannel, currentUser, fet
                   onClick={() => handleChannelClick(channel)}
                   className={`w-full flex items-center justify-between px-2 py-1.5 rounded transition-all duration-200 group
                     ${isActive 
-                      ? 'bg-purple-600/20 text-purple-300' 
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+                      ? 'bg-emerald-500/20 text-emerald-400' 
+                      : 'text-gray-400 hover:bg-gray-900 hover:text-gray-200'
                     }`}
                 >
                   <div className="flex items-center gap-2 overflow-hidden">
-                    <Hash size={16} className={isActive ? 'text-purple-400' : 'text-gray-500 group-hover:text-gray-400'} />
+                    <Hash size={16} className={isActive ? 'text-emerald-400' : 'text-gray-500 group-hover:text-gray-400'} />
                     <span className={`truncate ${isActive || hasUnread ? 'font-medium' : ''}`}>
                       {channel.name.replace('#', '')}
                     </span>
                   </div>
                   {hasUnread && !isActive && (
-                    <span className="bg-purple-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)]">
+                    <span className="bg-orange-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-[0_0_8px_rgba(251,146,60,0.4)]">
                       {channel.unreadCount}
                     </span>
                   )}
@@ -95,22 +95,22 @@ const Sidebar = ({ channels, currentChannel, setCurrentChannel, currentUser, fet
                   onClick={() => handleChannelClick(channel)}
                   className={`w-full flex items-center justify-between px-2 py-1.5 rounded transition-all duration-200 group
                     ${isActive 
-                      ? 'bg-purple-600/20 text-purple-300' 
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+                      ? 'bg-emerald-500/20 text-emerald-400' 
+                      : 'text-gray-400 hover:bg-gray-900 hover:text-gray-200'
                     }`}
                 >
                   <div className="flex items-center gap-2 overflow-hidden">
                     <img 
                       src={otherMember?.avatarUrl || 'https://ui-avatars.com/api/?name=Unknown'} 
                       alt={displayName}
-                      className="w-4 h-4 rounded-sm bg-gray-700" 
+                      className="w-4 h-4 rounded-sm bg-gray-800" 
                     />
                     <span className={`truncate ${isActive || hasUnread ? 'font-medium' : ''}`}>
                       {displayName}
                     </span>
                   </div>
                   {hasUnread && !isActive && (
-                    <span className="bg-purple-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)]">
+                    <span className="bg-orange-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-[0_0_8px_rgba(251,146,60,0.4)]">
                       {channel.unreadCount}
                     </span>
                   )}
@@ -125,11 +125,11 @@ const Sidebar = ({ channels, currentChannel, setCurrentChannel, currentUser, fet
         <>
           <div 
             onClick={() => setIsProfileOpen(true)}
-            className="p-4 border-t border-gray-800 bg-gray-900 shrink-0 cursor-pointer hover:bg-gray-800 transition-colors"
+            className="p-4 border-t border-gray-900 bg-gray-950 shrink-0 cursor-pointer hover:bg-gray-900 transition-colors"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
-                <img src={currentUser.avatarUrl} alt={currentUser.username} className="w-8 h-8 rounded-md bg-gray-800" />
+                <img src={currentUser.avatarUrl} alt={currentUser.username} className="w-8 h-8 rounded-md bg-gray-800 border border-gray-900" />
                 <div className="truncate">
                   <div className="text-sm font-bold text-gray-200 truncate">{currentUser.username}</div>
                   <div className="text-xs text-gray-500 truncate">{currentUser.email}</div>
@@ -140,7 +140,7 @@ const Sidebar = ({ channels, currentChannel, setCurrentChannel, currentUser, fet
                   e.stopPropagation();
                   logout();
                 }} 
-                className="text-gray-500 hover:text-red-400 hover:bg-gray-700 p-1.5 rounded transition-colors" 
+                className="text-gray-500 hover:text-red-400 hover:bg-gray-800 p-1.5 rounded transition-colors" 
                 title="Logout"
               >
                 <LogOut size={16} />

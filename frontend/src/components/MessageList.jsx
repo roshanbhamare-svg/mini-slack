@@ -8,7 +8,7 @@ const formatTime = (dateString) => {
   return new Date(dateString).toLocaleTimeString([], options);
 };
 
-const MessageList = ({ messages, currentUser, channelId, onReply }) => {
+const MessageList = ({ messages, currentUser, channelId, onReply, theme = 'light' }) => {
   const socket = useSocket();
   const [hoveredMessageId, setHoveredMessageId] = useState(null);
   const [infoMessage, setInfoMessage] = useState(null);
@@ -30,7 +30,7 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
         return (
           <div 
             key={msg._id} 
-            className={`group flex gap-3 py-1.5 px-4 -mx-4 hover:bg-gray-800/80 transition-colors ${!showAvatar ? 'mt-0' : 'mt-2'}`}
+            className={`group flex gap-3 py-1.5 px-4 -mx-4 transition-colors ${theme === 'dark' ? 'hover:bg-gray-900/50' : 'hover:bg-gray-100/60'} ${!showAvatar ? 'mt-0' : 'mt-2'}`}
             onMouseEnter={() => setHoveredMessageId(msg._id)}
             onMouseLeave={() => setHoveredMessageId(null)}
           >
@@ -39,7 +39,7 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
                 <img 
                   src={msg.sender?.avatarUrl || 'https://ui-avatars.com/api/?name=Unknown&background=555&color=fff'} 
                   alt="avatar" 
-                  className="w-10 h-10 rounded-md object-cover shadow-sm bg-gray-700"
+                  className={`w-10 h-10 rounded-md object-cover shadow-sm ${theme === 'dark' ? 'bg-gray-800 border-gray-800' : 'bg-gray-200 border-gray-200'}`}
                 />
               ) : (
                 <div className="text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 flex items-center h-5">
@@ -51,7 +51,7 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
             <div className="flex-1 min-w-0">
               {showAvatar && (
                 <div className="flex items-baseline gap-2 mb-0.5">
-                  <span className="font-semibold text-gray-200">
+                  <span className={`font-semibold ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
                     {msg.sender?.username || 'Unknown User'}
                   </span>
                   <span className="text-xs text-gray-500">
@@ -60,7 +60,7 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
                 </div>
               )}
               
-              <div className={`text-gray-300 ${msg.isDeleted ? 'italic text-gray-500 text-sm' : 'leading-relaxed'}`}>
+              <div className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-800'} ${msg.isDeleted ? (theme === 'dark' ? 'italic text-gray-500 text-sm' : 'italic text-gray-400 text-sm') : 'leading-relaxed'}`}>
                 {msg.content}
               </div>
 
@@ -68,7 +68,7 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
               {msg.reactions && msg.reactions.length > 0 && (
                 <div className="flex gap-1 mt-1.5">
                   {msg.reactions.map((r, i) => (
-                    <span key={i} className="bg-gray-700/50 text-xs px-1.5 py-0.5 rounded border border-gray-600/50">
+                    <span key={i} className={`text-xs px-1.5 py-0.5 rounded border ${theme === 'dark' ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' : 'bg-orange-50 text-orange-900 border-orange-200'}`}>
                       {r.emoji}
                     </span>
                   ))}
@@ -78,13 +78,13 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
 
             {/* Hover Actions */}
             {!msg.isDeleted && hoveredMessageId === msg._id && (
-              <div className="absolute right-6 -mt-3 bg-gray-800 border border-gray-700 shadow-md rounded-md flex items-center p-0.5 z-10">
-                <div className="flex items-center gap-1 border-r border-gray-700 pr-1 mr-1">
-                  {['👍', '❤️', '😂', '🔥', '👀'].map(emoji => (
+              <div className={`absolute right-6 -mt-3 shadow-sm rounded-md flex items-center p-0.5 z-10 ${theme === 'dark' ? 'bg-gray-900 border border-gray-800' : 'bg-white border border-gray-200'}`}>
+                <div className={`grid grid-cols-10 gap-0.5 pr-1 mr-1 p-0.5 border-r ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'}`}>
+                  {['👍', '❤️', '😂', '🔥', '👀', '🎉', '💯', '🤔', '🙌', '✨', '😊', '🙏', '😎', '💡', '✅', '🚀', '👏', '😅', '😍', '🤷'].map(emoji => (
                     <button 
                       key={emoji}
                       onClick={() => handleReaction(msg._id, emoji)}
-                      className="p-1 text-gray-400 hover:bg-gray-600 hover:scale-110 rounded transition-all text-sm"
+                      className={`p-1.5 flex items-center justify-center hover:scale-110 rounded transition-all text-base ${theme === 'dark' ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-500 hover:bg-gray-100'}`}
                       title={`React ${emoji}`}
                     >
                       {emoji}
@@ -93,26 +93,26 @@ const MessageList = ({ messages, currentUser, channelId, onReply }) => {
                 </div>
                 <button 
                   onClick={() => onReply && onReply(msg)}
-                  className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded transition-colors"
+                  className={`p-2 rounded transition-colors ${theme === 'dark' ? 'text-gray-400 hover:text-blue-400 hover:bg-blue-500/20' : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'}`}
                   title="Reply"
                 >
-                  <MessageSquare size={14} />
+                  <MessageSquare size={18} />
                 </button>
                 {isMine && (
                   <>
                     <button 
                       onClick={() => setInfoMessage(msg)}
-                      className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded transition-colors"
+                      className={`p-2 rounded transition-colors ${theme === 'dark' ? 'text-gray-400 hover:text-emerald-400 hover:bg-emerald-500/20' : 'text-gray-400 hover:text-emerald-500 hover:bg-emerald-50'}`}
                       title="Message Info"
                     >
-                      <Info size={14} />
+                      <Info size={18} />
                     </button>
                     <button 
                       onClick={() => handleDelete(msg._id)}
-                      className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded transition-colors"
+                      className={`p-2 rounded transition-colors ${theme === 'dark' ? 'text-gray-400 hover:text-red-400 hover:bg-red-500/20' : 'text-gray-400 hover:text-red-500 hover:bg-red-50'}`}
                       title="Delete Message"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={18} />
                     </button>
                   </>
                 )}

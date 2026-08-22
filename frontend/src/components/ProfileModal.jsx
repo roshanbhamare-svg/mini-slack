@@ -55,17 +55,17 @@ const ProfileModal = ({ onClose, currentUser }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm transition-opacity">
       <div 
-        className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="h-24 bg-gradient-to-r from-purple-600 to-blue-600"></div>
+        <div className="h-24 bg-gradient-to-r from-emerald-300 to-teal-300"></div>
         
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white rounded-full p-1.5 transition-colors"
+          className="absolute top-4 right-4 bg-black/10 hover:bg-black/20 text-white rounded-full p-1.5 transition-colors"
         >
           <X size={20} />
         </button>
@@ -76,62 +76,62 @@ const ProfileModal = ({ onClose, currentUser }) => {
             <img 
               src={currentUser.avatarUrl} 
               alt={currentUser.username} 
-              className="w-24 h-24 rounded-xl border-4 border-gray-800 bg-gray-900 shadow-md"
+              className="w-24 h-24 rounded-xl border-4 border-white bg-gray-100 shadow-md"
             />
           </div>
 
-          <h2 className="text-2xl font-bold text-white">{currentUser.username}</h2>
-          <p className="text-gray-400 mt-1">{currentUser.email}</p>
+          <h2 className="text-2xl font-bold text-gray-900">{currentUser.username}</h2>
+          <p className="text-gray-500 mt-1">{currentUser.email}</p>
 
-          <div className="mt-6 border-t border-gray-700 pt-6">
+          <div className="mt-6 border-t border-gray-200 pt-6">
             {!isEditingPassword ? (
               <button 
                 onClick={() => setIsEditingPassword(true)}
-                className="w-full flex justify-center items-center py-2 px-4 border border-gray-600 rounded-lg text-sm font-medium text-gray-200 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+                className="w-full flex justify-center items-center py-2 px-4 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
               >
                 Change Password
               </button>
             ) : (
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-gray-300">Change Password</h3>
+                  <h3 className="text-sm font-medium text-gray-700">Change Password</h3>
                   <button 
                     type="button" 
                     onClick={() => setIsEditingPassword(false)}
-                    className="text-xs text-gray-500 hover:text-gray-300"
+                    className="text-xs text-gray-500 hover:text-gray-700"
                   >
                     Cancel
                   </button>
                 </div>
 
-                {error && <div className="text-red-400 text-sm bg-red-900/30 p-2 rounded border border-red-800/50">{error}</div>}
-                {success && <div className="text-green-400 text-sm bg-green-900/30 p-2 rounded border border-green-800/50 flex items-center gap-2"><Check size={16}/> {success}</div>}
+                {error && <div className="text-red-500 text-sm bg-red-50 p-2 rounded border border-red-200">{error}</div>}
+                {success && <div className="text-emerald-500 text-sm bg-emerald-50 p-2 rounded border border-emerald-200 flex items-center gap-2"><Check size={16}/> {success}</div>}
 
                 <div>
                   <input
                     type="password" placeholder="Current Password" required
                     value={currentPassword} onChange={e => setCurrentPassword(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md focus:outline-none focus:border-purple-500 text-white text-sm"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-gray-900 text-sm"
                   />
                 </div>
                 <div>
                   <input
                     type="password" placeholder="New Password" required minLength="6"
                     value={newPassword} onChange={e => setNewPassword(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md focus:outline-none focus:border-purple-500 text-white text-sm"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-gray-900 text-sm"
                   />
                 </div>
                 <div>
                   <input
                     type="password" placeholder="Confirm New Password" required minLength="6"
                     value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md focus:outline-none focus:border-purple-500 text-white text-sm"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-gray-900 text-sm"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors disabled:opacity-70 flex justify-center items-center"
+                  className="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md text-sm font-medium transition-colors disabled:opacity-70 flex justify-center items-center"
                 >
                   {isSubmitting ? 'Updating...' : 'Update Password'}
                 </button>
@@ -141,10 +141,10 @@ const ProfileModal = ({ onClose, currentUser }) => {
           
           {/* Logout Option directly in profile modal as well for convenience */}
           {!isEditingPassword && (
-             <div className="mt-4 pt-4 border-t border-gray-700">
+             <div className="mt-4 pt-4 border-t border-gray-200">
                <button 
                  onClick={logout}
-                 className="w-full text-left py-2 text-sm text-red-400 hover:text-red-300 transition-colors"
+                 className="w-full text-left py-2 text-sm text-red-500 hover:text-red-400 transition-colors"
                >
                  Log out of Mini Slack
                </button>

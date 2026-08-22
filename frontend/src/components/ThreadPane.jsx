@@ -83,12 +83,12 @@ const ThreadPane = ({ activeThread, onClose, currentUser, channelId }) => {
   if (!activeThread) return null;
 
   return (
-    <div className="flex flex-col h-full w-80 lg:w-96 border-l border-gray-700 bg-gray-800 shrink-0 shadow-xl">
-      <div className="h-14 border-b border-gray-700 flex items-center justify-between px-4 bg-gray-800 shrink-0">
-        <h3 className="font-bold text-gray-100">Thread</h3>
+    <div className="flex flex-col h-full w-80 lg:w-96 border-l border-gray-900 bg-gray-950 shrink-0 shadow-sm z-20">
+      <div className="h-14 border-b border-gray-900 flex items-center justify-between px-4 bg-gray-950 shrink-0">
+        <h3 className="font-bold text-white">Thread</h3>
         <button 
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-200 hover:bg-gray-700 p-1 rounded transition-colors"
+          className="text-gray-500 hover:text-gray-200 hover:bg-gray-900 p-1 rounded transition-colors"
         >
           <X size={20} />
         </button>
@@ -96,11 +96,12 @@ const ThreadPane = ({ activeThread, onClose, currentUser, channelId }) => {
 
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-1">
         {/* Render the original parent message distinctly */}
-        <div className="pb-4 mb-4 border-b border-gray-700/50">
+        <div className="pb-4 mb-4 border-b border-gray-900">
           <MessageList 
             messages={[activeThread]} 
             currentUser={currentUser} 
             channelId={channelId} 
+            theme="dark"
           />
         </div>
         
@@ -109,6 +110,7 @@ const ThreadPane = ({ activeThread, onClose, currentUser, channelId }) => {
           messages={replies} 
           currentUser={currentUser} 
           channelId={channelId} 
+          theme="dark"
         />
         <div ref={messagesEndRef} />
       </div>
@@ -117,12 +119,12 @@ const ThreadPane = ({ activeThread, onClose, currentUser, channelId }) => {
         <button
           onClick={handleDraftReply}
           disabled={isDrafting}
-          className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-purple-600/20 to-blue-600/20 text-purple-300 hover:from-purple-600/40 hover:to-blue-600/40 border border-purple-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-500/10 to-teal-500/10 text-emerald-400 hover:from-emerald-500/20 hover:to-teal-500/20 border border-emerald-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
           {isDrafting ? (
             <Loader2 size={14} className="animate-spin" />
           ) : (
-            <Sparkles size={14} className="text-purple-400" />
+            <Sparkles size={14} className="text-emerald-400" />
           )}
           {isDrafting ? 'Drafting...' : 'Draft AI Reply'}
         </button>
@@ -132,6 +134,7 @@ const ThreadPane = ({ activeThread, onClose, currentUser, channelId }) => {
           threadId={activeThread._id} 
           initialDraft={aiDraft}
           draftTrigger={draftTrigger}
+          theme="dark"
         />
       </div>
     </div>
